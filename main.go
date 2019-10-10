@@ -47,7 +47,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 					<h1>Error Service</h1>
 				</div>
 				<div class="content">
-					<h2>Button Links</h2>
+					<h2>Quick Errors</h2>
 					<a target="_new" href="/codes/random">random error</a>, <a target="_new" href="/codes/404">error 404</a>, <a target="_new" href="/codes/500">error 500</a>, <a target="_new" href="/codes/503">error 503</a>
 					<h2>Error Generator</h2>
 					<div class="buttons">
