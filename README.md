@@ -33,7 +33,7 @@ All errors are listed.
 You may click _stop_ if you have enough errors.  
 You need to have javascript enable for that one.
 
-![](images/screenshot.png)
+![](images/screenshot.gif)
 
 ## Building
 
