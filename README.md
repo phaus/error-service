@@ -1,6 +1,6 @@
 # EaaS - Error as a Service
 
-Sometime you need to have service, that just puts out HTTP Errors.
+Sometimes you need to have service, that just puts out HTTP Errors.
 Either on purpose or - even better - randomly.
 
 So here it is!
