@@ -5,19 +5,24 @@ Either on purpose or - even better - randomly.
 
 So here it is!
 
+## Health Check
+
+You can use `/.well-known/health-check` for your health probes of you container manager.
+
 ## Random errors
 
 You can call `/errors/random` for a totally random status.  
 Errors have a probability of 70%.  
+
 There is a - hardcoded - list of Errors:
 
-```
+```go
 var errorsList = [...]int{
-	http.StatusInternalServerError,
-	http.StatusServiceUnavailable,
-	http.StatusBadRequest,
-	http.StatusBadGateway,
-	http.StatusConflict}
+    http.StatusInternalServerError,
+    http.StatusServiceUnavailable,
+    http.StatusBadRequest,
+    http.StatusBadGateway,
+    http.StatusConflict}
 ```
 
 ## Your personal status
@@ -35,6 +40,15 @@ You need to have javascript enable for that one.
 
 ![](images/screenshot.gif)
 
+## Kill the app
+
+You can forcefully kill the service by sending a __POST__ to `/kill`.
+E.g.: 
+
+```bash
+curl -X POST http://localhost:9000/kill
+```
+
 ## Building
 
 You can build the service with `build.sh` - you need docker for that one. 
@@ -51,8 +65,3 @@ Just do a `docker pull phaus/error-service:latest`
 
 Enjoy!
 Leave a comment to tell me, what you are doing with this!
-
-
-
-
-
