@@ -22,6 +22,8 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	r := mux.NewRouter()
 	r.HandleFunc("/", indexHandler).Methods("GET")
+	r.HandleFunc("/kill", killHandler).Methods("POST")
+	r.HandleFunc("/.well-known/health-check", healthCheckHander).Methods("GET")
 	r.HandleFunc("/errors/random", randomHandler).Methods("GET")
 	r.HandleFunc("/codes/{code}", codeHandler).Methods("GET")
 
@@ -47,6 +49,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 					<h1>Error Service</h1>
 				</div>
 				<div class="content">
+					<h2>Shutdown</h2>
+					<form method="post" action="/kill">
+						<input class="danger-button" type="submit" value="shutdown" />
+					</form>
 					<h2>Quick Errors</h2>
 					<a target="_new" href="/codes/random">random error</a>, <a target="_new" href="/codes/404">error 404</a>, <a target="_new" href="/codes/500">error 500</a>, <a target="_new" href="/codes/503">error 503</a>
 					<h2>Error Generator</h2>
@@ -63,6 +69,16 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		</html>
 	`
 	fmt.Fprintln(w, fmt.Sprintf(out, style, script))
+}
+
+func killHandler(w http.ResponseWriter, r *http.Request) {
+	log.Fatalln("bye bye 😥")
+	http.Error(w, "bye bye 😥", http.StatusInternalServerError)
+}
+
+func healthCheckHander(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	fmt.Fprintln(w, "{\"status\":\"ok\",\"icon\":\"👌\"}")
 }
 
 func randomHandler(w http.ResponseWriter, r *http.Request) {
@@ -136,11 +152,17 @@ body {
 	padding: 10px;
 }
 
-.buttons input {
-	border:1px solid black; 
+.buttons input, .danger-button {
+	border:1px solid black;
 	padding:10px;
 	margin: 0px 15px;
 	width: 45%;
+}
+
+.danger-button {
+	color: white;
+	font-weight: bold;
+	background-color: red;
 }
 
 .result {
