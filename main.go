@@ -16,7 +16,8 @@ var errorsList = [...]int{
 	http.StatusServiceUnavailable,
 	http.StatusBadRequest,
 	http.StatusBadGateway,
-	http.StatusConflict}
+	http.StatusConflict,
+	http.StatusTeapot}
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
@@ -56,8 +57,21 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 					<h2>Quick Errors</h2>
 					<a target="_new" href="/codes/random">random error</a>, <a target="_new" href="/codes/404">error 404</a>, <a target="_new" href="/codes/500">error 500</a>, <a target="_new" href="/codes/503">error 503</a>
 					<h2>Error Generator</h2>
-					<div class="buttons">
-						<input id="button-stop" type="button" value="stop" /> <input id="button-start" type="button" value="start" />
+					<div>
+						<p>
+						every <input class="value" value="500" id="timeout" size="4" />ms generate 
+						<select id="errorType">
+							<option value="random">Random Status</option>
+							<option value="502">502 - BadGateway</option>
+							<option value="503">503 - ServiceUnavailable</option>
+							<option value="500">500 - InternalServerError</option>
+							<option value="418">418 - Teapot</option>
+							<option value="409">409 - Conflict</option>
+							<option value="400">400 - BadRequest</option>
+							<option value="200">200 - Okay</option>
+						</select>
+						</p>
+						<input class="button" id="button-stop" type="button" value="stop" /> <input class="button" id="button-start" type="button" value="start" />
 					</div>
 				</div>
 				<div id="result">
@@ -87,7 +101,7 @@ func randomHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintln(w, fmt.Sprintf("🙌 got: %d", value))
 	} else {
-		i := rand.Intn(4)
+		i := rand.Intn(len(errorsList) - 1)
 		code := errorsList[i]
 		sendError(w, code)
 	}
@@ -130,6 +144,9 @@ func sendError(w http.ResponseWriter, code int) {
 	case http.StatusConflict:
 		http.Error(w, "😭 StatusConflict!", http.StatusConflict)
 		return
+	case http.StatusTeapot:
+		http.Error(w, "🍵 StatusTeapot!", http.StatusTeapot)
+		return
 	default:
 		http.Error(w, fmt.Sprintf("👽 error code %d not found!", code), http.StatusNotFound)
 		return
@@ -152,7 +169,7 @@ body {
 	padding: 10px;
 }
 
-.buttons input, .danger-button {
+.button, .danger-button {
 	border:1px solid black;
 	padding:10px;
 	margin: 0px 15px;
@@ -183,8 +200,12 @@ var script = `
 	var startButton = document.getElementById("button-start");
 	var stopButton = document.getElementById("button-stop");
 	var resultList = document.getElementById("result");
-	var oldDiv = document.createElement("div"); 
+	var errorSelect = document.getElementById("errorType");
+	var timeout = document.getElementById("timeout");
+	var oldDiv = document.createElement("div");
+	var url;
 	var oldBGColor;
+	var timeoutValue;
 	var toggle = false;
 	var running = false;
 	bootstrap();
@@ -192,6 +213,13 @@ var script = `
 		if (!running) {
 			oldBGColor = startButton.style.backgroundColor;
 			startButton.style.backgroundColor = 'lime';
+			timeoutValue = roughScale(timeout.value);
+			errorValue = errorSelect.options[errorSelect.selectedIndex].value;
+			if(errorValue === "random") {
+				url = '/errors/random';
+			}	else {
+				url = '/codes/'+errorValue;
+			}
 			running = true;
 		}
 		callErrors();
@@ -204,7 +232,6 @@ var script = `
 	};
 
 	function callErrors() {
-		var url = '/errors/random';
 		var request = new XMLHttpRequest();
 		request.open("GET",url);
 		request.addEventListener('load', function(event) {
@@ -214,7 +241,7 @@ var script = `
 		request.send();
 		if(running) {
 			toggleColor();
-			setTimeout(callErrors, 500);
+			setTimeout(callErrors, timeoutValue);
 		}
 	}
 
@@ -241,4 +268,11 @@ var script = `
 		oldDiv.classList.add("result-item");
 		resultList.appendChild(oldDiv);
 	}
+
+	function roughScale(x) {
+		var parsed = parseInt(x, 10);
+		if (isNaN(parsed)) { return 500 }
+		return parsed;
+	  }
+	  
 `
