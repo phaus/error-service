@@ -52,7 +52,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 				<div class="content">
 					<h2>Shutdown</h2>
 					<form method="post" action="/kill">
-						<input class="danger-button" type="submit" value="shutdown" />
+						<input class="danger-button" type="submit" value="kill service" />
 					</form>
 					<h2>Quick Errors</h2>
 					<a target="_new" href="/codes/random">random error</a>, <a target="_new" href="/codes/404">error 404</a>, <a target="_new" href="/codes/500">error 500</a>, <a target="_new" href="/codes/503">error 503</a>
