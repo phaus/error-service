@@ -59,8 +59,7 @@ You can run the service with `run.sh` - you need docker for that one.
 
 ## Pull from Docker
 
-There is already a version present.
-Just do a `docker pull phaus/error-service:latest`
+If there is already a version present, just do a `docker pull phaus/error-service:latest`
 
 
 Enjoy!
